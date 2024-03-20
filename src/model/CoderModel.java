@@ -208,10 +208,11 @@ public class CoderModel implements CRUD {
     }
 
     @Override
-    public Object findByName(String name) {
+    public ArrayList<Object> findByName(String name) {
+
 
         Connection objConection = ConfigDB.OpenConnection();
-        Coder objCoder = null;
+        ArrayList<Object> objCoder = new ArrayList<Object>();
 
         try {
             //2. generar la consulta
@@ -229,11 +230,12 @@ public class CoderModel implements CRUD {
             ResultSet resultSet = objStatement.executeQuery();
 
             while (resultSet.next()){
-                objCoder = new Coder();
-                objCoder.setName(resultSet.getString("name"));
-                objCoder.setAge(resultSet.getInt("age"));
-                objCoder.setId(resultSet.getInt("id"));
-                objCoder.setClan(resultSet.getString("clan"));
+                Coder coder1 = new Coder();
+                coder1.setName(resultSet.getString("name"));
+                coder1.setAge(resultSet.getInt("age"));
+                coder1.setId(resultSet.getInt("id"));
+                coder1.setClan(resultSet.getString("clan"));
+                objCoder.add(coder1);
 
             }
 
@@ -246,7 +248,7 @@ public class CoderModel implements CRUD {
         //8. cerrar la conexion a la base de datos
         ConfigDB.closeConnection();
 
-        return objCoder;
+        return objCoder ;
 
     }
 
