@@ -20,8 +20,7 @@ public class Main {
                     3. UPDATE CODER
                     4. DELETE CODER
                     5. GET BY ID
-                    6. GET BY NAME
-                    7. EXIT
+                    6. EXIT
                     
                     CHOSE AN OPTION
                     
@@ -48,6 +47,5 @@ public class Main {
                     break;
             }
         }while (!option.equals("6"));
-
     }
 }

@@ -80,7 +80,7 @@ public class CoderController {
 
 
     public void findByName() {
-        String name = JOptionPane.showInputDialog(null, "Dame el nombre a eliminar");
+        String name = JOptionPane.showInputDialog(null, "Dame el nombre a Buscar");
         Coder objCoder = (Coder) this.objCoderModel.findByName(name);
 
 
