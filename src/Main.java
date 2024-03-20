@@ -20,7 +20,8 @@ public class Main {
                     3. UPDATE CODER
                     4. DELETE CODER
                     5. GET BY ID
-                    6. EXIT
+                    6. GET BY NAME
+                    7. EXIT
                     
                     CHOSE AN OPTION
                     
@@ -35,8 +36,10 @@ public class Main {
                 case "3":
                     break;
                 case "4":
+                    objCoderController.delete();
                     break;
                 case "5":
+                    objCoderController.findByName();
                     break;
                 case "6":
                     break;

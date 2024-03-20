@@ -22,9 +22,10 @@ public interface CRUD {
 
 
     //Listar por ID
-    public Object findById(Object object);
 
+    Object findById(int id);
 
+    //Listar por nombre
 
-
+    Object findByName(String name);
 }

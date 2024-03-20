@@ -23,38 +23,37 @@ public class CoderModel implements CRUD {
         Connection ObjeConnecion = ConfigDB.OpenConnection();
 
         //2 Castear el objeto
-        Coder objCoder = (Coder)object;
+        Coder objCoder = (Coder) object;
 
         try {
             //3. Escribimos el SQL
             //Cada signo va a ser lo que nosotros ingresemos en el controller
-            String sql = "INSERT * INTO coder(name,age,clan) VALUES(?,?,?);";
+            String sql = "INSERT INTO coder(name,age,clan) VALUES(?,?,?);";
 
             //4. preparar o utilizar PrepareStatement // y le decimos que retorne las llaves generadas
             PreparedStatement objPrepare = (PreparedStatement) ObjeConnecion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
             //5. Escribir los valores dentro de la consulta o los ?
-            objPrepare.setString(1,objCoder.getName());
-            objPrepare.setInt(2,objCoder.getAge());
+            objPrepare.setString(1, objCoder.getName());
+            objPrepare.setInt(2, objCoder.getAge());
             objPrepare.setString(3, objCoder.getClan());
 
-            //6. Ejecutar la consulta
-            objPrepare.executeQuery();
+            //6. Ejecutar la consulta se usa execute cuando no va a traer nada de la base de datos en este caso solo insertamos
+            objPrepare.execute();
 
             //7. Obtener la consulta
             ResultSet objResult = objPrepare.getGeneratedKeys();
 
-            while (objResult.next()){
+            while (objResult.next()) {
                 objCoder.setId(objResult.getInt(1));
             }
 
             //8. Cerrar el prepare statement
             objPrepare.close();
-            JOptionPane.showInputDialog(null,"coder insertion successfully");
+            JOptionPane.showMessageDialog(null, "coder insertion successfully");
 
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Insert failed" + e.getMessage());
         }
         ConfigDB.closeConnection();
@@ -63,29 +62,56 @@ public class CoderModel implements CRUD {
     }
 
 
-
-
-
-
+    //=======================================================================================================================================
     @Override
     public boolean update(Object object) {
         return false;
     }
 
+    //=======================================================================================================================================
     @Override
     public boolean delete(Object object) {
+
+        //1. convertir el objeto a entidad tipo coder
+        Coder objCoder = (Coder) object;
+
+        //2. variable booleana para medir el estado de la eliminacion
+        boolean isDeleted = false;
+
+        //3. abrir la conexion
+        Connection objConnection = ConfigDB.OpenConnection();
+
+        try {
+
+            //4. hacer la consulta SQL
+            String sql = "DELETE FROM coder WHERE coder.id = ?;";
+
+            //5. preparar el statement
+            PreparedStatement objPrepare = (PreparedStatement) objConnection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            //6. Asignar el valor al signo de interrogacion
+            objPrepare.setInt(1, objCoder.getId());
+
+            //7. Ejecutar la consulta y devuelve la cantidad de filas afectadas por la consulta SQL
+            int totalRowsAff = objPrepare.executeUpdate();
+
+            if (totalRowsAff > 0) {
+                isDeleted = true;
+                JOptionPane.showMessageDialog(null, "Elimination Successfully.");
+            }
+
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        //8. Cerrar la conexion
+        ConfigDB.closeConnection();
+
         return false;
     }
 
 
-
-
-
-
-
-
-
-
+//=========================================================================================================
 
     @Override
     public List<Object> findAll() {
@@ -93,7 +119,7 @@ public class CoderModel implements CRUD {
         Connection ObjeConnecion = ConfigDB.OpenConnection();
 
         //2. Inicializar la lista donde se guardan los registros que devuelve la BD
-        List<Object>ListCoders = new ArrayList<Object>();
+        List<Object> ListCoders = new ArrayList<Object>();
 
         try {
             //3. escribir la sentencia SQL
@@ -112,7 +138,7 @@ public class CoderModel implements CRUD {
             ResultSet objResultSet = (ResultSet) objPrepareStatement.executeQuery();
 
             //7. guardar el resultado
-            while(objResultSet.next()){
+            while (objResultSet.next()) {
                 Coder objCoder = new Coder();
                 //trae el id de la base de datos y lo guarda dentro del id del objeto coder o la instancia del objeto que acabo de crear
 
@@ -127,7 +153,7 @@ public class CoderModel implements CRUD {
             }
 
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Data acquisition failed");
         }
 
@@ -136,15 +162,93 @@ public class CoderModel implements CRUD {
         ConfigDB.closeConnection();
         return ListCoders;
     }
+    //============================================================================================================
 
     @Override
-    public Object findById(Object object) {
-        return null;
+    public Object findById(int id) {
+        //1. abrir la conexion
+        Connection objConnection = ConfigDB.OpenConnection();
+        Coder objCoder = null;
+
+        try {
+            //2. generar la consulta
+
+            String sql = "SELECT * FROM coder WHERE id = ?;";
+
+            //3. preparar o utilizar PrepareStatement
+            PreparedStatement objPrepare = (PreparedStatement) objConnection.prepareStatement(sql);
+
+            //4. Insertar los elementos al ? con el prepare statement
+            objPrepare.setInt(1, id);
+
+            //5. Ejecutar la consulta se usa para guardar el resultado
+            ResultSet resultSet = objPrepare.executeQuery();
+
+            //Mientras haya un registro siguiente
+
+            while (resultSet.next()) {
+                objCoder = new Coder();
+                //trae el id de la base de datos y lo guarda dentro del id del objeto coder o la instancia del objeto que acabo de crear
+                //traemos todos los datos y los guardamos en la instancia del objeto Coder llamada objCoder
+                //guardar lo que la base de datos me trae
+                objCoder.setId(resultSet.getInt("id"));
+                objCoder.setName(resultSet.getString("name"));
+                objCoder.setAge(resultSet.getInt("age"));
+                objCoder.setClan(resultSet.getString("clan"));
+            }
+
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        //8. cerrar la conexion a la base de datos
+        ConfigDB.closeConnection();
+
+        return objCoder;
     }
 
+    @Override
+    public Object findByName(String name) {
+
+        Connection objConection = ConfigDB.OpenConnection();
+        Coder objCoder = null;
+
+        try {
+            //2. generar la consulta
+            String sql = "SELECT * FROM coder WHERE name = ?;";
+
+            //3. Preparar el statement
+            PreparedStatement objStatement = (PreparedStatement) objConection.prepareStatement(sql);
+
+            //4 Añadir los elementos
+            objStatement.setString(1, name);
+
+
+            //5. Ejecutar la consulta
+
+            ResultSet resultSet = objStatement.executeQuery();
+
+            while (resultSet.next()){
+                objCoder = new Coder();
+                objCoder.setName(resultSet.getString("name"));
+                objCoder.setAge(resultSet.getInt("age"));
+                objCoder.setId(resultSet.getInt("id"));
+                objCoder.setClan(resultSet.getString("clan"));
+
+            }
 
 
 
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+
+        }
+        //8. cerrar la conexion a la base de datos
+        ConfigDB.closeConnection();
+
+        return objCoder;
+
+    }
 
 
 }
