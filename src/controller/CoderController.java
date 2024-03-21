@@ -5,6 +5,7 @@ import model.CoderModel;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CoderController {
     //crear una instancia del model
@@ -16,11 +17,17 @@ public class CoderController {
     }
     //METODO PARA LISTAR LOS CODER
     public void getAll(){
+        //Sobreescritura del metodo de la lista, ejecuta el get all de abajo
+        String List = this.getAll(this.objCoderModel.findAll());
+        JOptionPane.showMessageDialog(null,List);
+    }
+
+    public String getAll(List<Object> listObject){
         //El modelo interactua con el controller
         String List = "list coders \n";
 
         //Recorremos la lista que devuelve findAll
-        for (Object obj : this.objCoderModel.findAll()){
+        for (Object obj : listObject){
 
             //el coder normal esta tipo objeto y lo convierto en clase coder y automaticamente lo que se recorre se convirtio en tipo coder
             Coder objCoder = (Coder) obj;
@@ -28,10 +35,9 @@ public class CoderController {
             //Concatenamos la informacion
             List += objCoder.toString()  + "\n";
         }
-        JOptionPane.showMessageDialog(null,List);
-
+        return List;
     }
-
+    //============================================================================================================
     public void create(){
         //1 crear coder
         Coder objCoder = new Coder();
@@ -54,11 +60,7 @@ public class CoderController {
     //=============================================================================================================
 
     public void delete(){
-        String listCoderString = "CODER LIST o_o \n";
-        for (Object obj : this.objCoderModel.findAll()){
-            Coder objCoder = (Coder) obj;
-            listCoderString += objCoder.toString() + "\n";
-        }
+        String listCoderString = this.getAll(this.objCoderModel.findAll());
 
         int confirm = 1;
         int idDelete = Integer.parseInt(JOptionPane.showInputDialog(listCoderString + "Enter the ID of the coder to delete"));
@@ -77,18 +79,34 @@ public class CoderController {
         }
     }
 
+    //==============================================================================================================
+    public void update(){
+        //Listamos
+        String list = this.getAll(this.objCoderModel.findAll());
+        //pedimos el id
+        int idUpdate = Integer.parseInt(JOptionPane.showInputDialog(list + "\nEmter the ID of the coder to edit"));
+        Coder objcoder  = (Coder) this.objCoderModel.findById(idUpdate);
 
+        if (objcoder == null){
+            JOptionPane.showMessageDialog(null,"Coder not found");
 
-    public void findByName() {
-        String name = JOptionPane.showInputDialog(null, "Dame el nombre a Buscar");
-        Coder objCoder = (Coder) this.objCoderModel.findByName(name);
+        }else {
+            //PEDIR LOS DATOS AL USUARIO
+            String name = JOptionPane.showInputDialog(null, "Enter  new Name", objcoder.getName());
+            String clan = JOptionPane.showInputDialog(null, "Enter new clan", objcoder.getClan());
+            int age = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter new age", String.valueOf(objcoder.getAge())));
 
+            objcoder.setName(name);
+            objcoder.setAge(age);
+            objcoder.setClan(clan);
 
-        if (objCoder == null) {
-            JOptionPane.showMessageDialog(null, "Coder Not found");
-        } else {
-            JOptionPane.showMessageDialog(null, objCoder.toString());
+            this.objCoderModel.update(objcoder);
 
         }
+    }
+
+    public void findByName() {
+
+
     }
 }

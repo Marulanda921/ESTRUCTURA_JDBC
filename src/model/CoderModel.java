@@ -65,7 +65,45 @@ public class CoderModel implements CRUD {
     //=======================================================================================================================================
     @Override
     public boolean update(Object object) {
-        return false;
+        Connection objConnection = ConfigDB.OpenConnection();
+        //1. convertir el objeto a entidad tipo coder se convierte porque object es un tipo generico y al covertirlo necesito los metodos de coder
+        Coder objCoder = (Coder) object;
+        //2. variable booleana para medir el estado de la actualizacion
+        boolean isUpdated = false;
+
+        try {
+            //3 escribimos o creamos la sentencia SQL
+            String sql = "UPDATE coder SET name = ?, age = ?, clan = ?  WHERE id = ?;";
+
+            //4. preparar el statement solo se retornan las generated keys cuando se va a actualizar o a agregar ya que se generan keys nuevos
+            PreparedStatement objPrepare = (PreparedStatement) objConnection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            //5. Asignar el valor al signo de interrogacion
+            objPrepare.setString(1,objCoder.getName());
+            objPrepare.setInt(2,objCoder.getAge());
+            objPrepare.setString(3,objCoder.getClan());
+            objPrepare.setInt(4,objCoder.getId());
+
+            //6. Ejecutar la consulta y devuelve la cantidad de filas afectadas por la consulta SQL
+            int rowsAffected = objPrepare.executeUpdate();
+
+            //7. si las filas afectadas es mayor a 0 se ve que si se actualizo y poder el booleano en true
+
+            if (rowsAffected > 0){
+                isUpdated = true;
+                JOptionPane.showMessageDialog(null, "Update Successfully.");
+            }
+
+
+
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }finally {
+            //8. cerrar la conexion
+            ConfigDB.closeConnection();
+        }
+
+       return isUpdated;
     }
 
     //=======================================================================================================================================

@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+
 public class Main {
     public static void main(String[] args) {
         CoderController objCoderController = new CoderController();
@@ -33,6 +34,7 @@ public class Main {
                     objCoderController.create();
                     break;
                 case "3":
+                    objCoderController.update();
                     break;
                 case "4":
                     objCoderController.delete();

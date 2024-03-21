@@ -19,9 +19,9 @@ public class ConfigDB {
 
 
             //creamos variables con las credenciales a la base de datos
-            String url = "jdbc:mysql://localhost:3306/primeraDB";
-            String user = "root";
-            String password = "Rlwl2023.";
+            String url = "jdbc:mysql://uwsbvv2ampph0dvw:PsKrU9qLHEkTo0iHJwiM@b6msfy8scgynmmzwkaxi-mysql.services.clever-cloud.com:3306/b6msfy8scgynmmzwkaxi";
+            String user = "uwsbvv2ampph0dvw";
+            String password = "PsKrU9qLHEkTo0iHJwiM";
 
             //establecemos la conexion en la base de datos
             objConnection = (Connection) DriverManager.getConnection(url, user, password);
